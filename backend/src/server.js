@@ -2,11 +2,14 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+
 
 import notesRoutes from "./routes/notesRoutes.js";
 import {connectDB} from "./config/db.js";
 import rateLimiter from "./middleware/ratelimiter.js";
-
+import authRoute from "./routes/AuthRoute.js";  
 
 dotenv.config();
 
@@ -23,9 +26,10 @@ if (process.env.NODE_ENV !== "production"){
 }
 
 //middleware
+app.use(cookieParser())
 app.use(express.json());
 app.use(rateLimiter);   
-
+app.use("/", authRoute);
 app.use("/api/notes", notesRoutes);
 
 if (process.env.NODE_ENV === "production"){
